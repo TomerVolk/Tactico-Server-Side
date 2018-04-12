@@ -2,13 +2,36 @@ package network;
 
 import javax.swing.ImageIcon;
 
+/**
+ * the tools in the game
+ * @author tomer
+ */
 public class Tool {
-	// the tools in the game
-	public static ImageIcon[] tool = new ImageIcon[12]; // an array of all the pictures
-	public static ImageIcon[] toolred = new ImageIcon[12]; // an array of all the pictures
-	private int type = -1; // the type number of the tool, flag is 11
-	private int x=-1, y=-1; // the x and y coordination on board
-	private boolean isDead = true; // whether the tool is alive
+	/**
+	 * an array of all the pictures
+	 */
+	public static ImageIcon[] tool = new ImageIcon[12];
+	/**
+	 * an array of all the pictures marked
+	 */
+	public static ImageIcon[] toolred = new ImageIcon[12]; 
+	/**
+	 * the type number of the tool
+	 * flag is 11, bomb is 0
+	 */
+	private int type = -1;
+	/**
+	 * the x coordination on board
+	 */
+	private int x=-1;
+	/**
+	 * the y coordination on board
+	 */
+	private int y=-1;
+	/**
+	 * whether the tool is dead
+	 */
+	private boolean isDead = true;
 	static {
 		for (int i = 0; i < 12; i++) {
 			tool[i] = new ImageIcon("pic/" + i + ".PNG");
@@ -16,50 +39,76 @@ public class Tool {
 		}
 	}
 
+	/**
+	 * Initiate a tool of a certain type
+	 * @param t the type of the tool
+	 */
 	public Tool(int t) {
 		this.type = t;
 		if (tool == null)
 			updatePic();
 	}
 
+	/**
+	 * if the image array is null, initiates it
+	 */
 	public void updatePic() {
 		tool = new ImageIcon[12];
 	}
 
+	/**
+	 * kills the tool and sends it to (-1,-1)
+	 */
 	public void kill() {
-		//kills the tool and sends it to (-1,-1)
 		isDead = true;
 		x=-1;
 		y=-1;
 	}
 
+	/**
+	 * brings the tool to life
+	 * @param x the x coordinate where the tool is starting
+	 * @param y the y coordinate where the tool is starting
+	 */
 	public void start(int x, int y) {
-		//brings the tool to life
 		this.x=x;
 		this.y=y;
 		isDead = false;
 	}
 
+	/**
+	 * @return if the tool is dead
+	 */
 	public boolean isDead() {
-		// returns if the tool is dead
 		return isDead;
 	}
 
+	/**
+	 * @return the place of the tool
+	 */
 	public Point getPlace() {
-		// returns the place of the tool
 		return (new Point(x, y));
 	}
 
+	/**
+	 * @return the type of the tool
+	 */
 	public int getType() {
-		// returns the type of the tool
 		return type;
 	}
 
+	/**
+	 * changes the tool location
+	 * @param x  the x coordinate where the tool is moved
+	 * @param y  the y coordinate where the tool is moved
+	 */
 	public void setLocation(int x, int y) {
-		// changes the tool location to the x,y given
 		this.x = x;
 		this.y = y;
 	}
+	/**
+	 * A string describing the tool
+	 */
 	public String toString() {
 		String ans="";
 		ans+= x+"##"+y+"##"+type;

@@ -1,19 +1,42 @@
 package network;
 import java.io.*;
 import java.net.*;
-
-
+/**
+ * the class that gets the data from sever and pass it to the right place
+ * @author tomer
+ *
+ */
 class NetworkRead implements Runnable{
+	/**
+	 * the server socket
+	 */
 	Socket socket;
+	/**
+	 * the frame of the game
+	 */
 	Board board;
+	/**
+	 * the id of that player
+	 */
 	int id;
+	/**
+	 * indicates who's turn is it
+	 */
 	int turn;
 
+	/**
+	 * the constructor that initiates the fields
+	 * @param socket the server socket
+	 * @param board2 the board 
+	 */
 	public NetworkRead(Socket socket, Board board2){
 		this.socket=socket;
 		this.board=board2;
 
 	}
+	/**
+	 * the function that runs and keep updating from the server
+	 */
 	public void run(){
 		try{
 

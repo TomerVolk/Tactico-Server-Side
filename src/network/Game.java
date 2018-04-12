@@ -1,29 +1,68 @@
 package network;
-
 import network.Board.Place;
 
-
-
+/**
+ * the class responsible for all calculations of the game
+ * @author tomer
+ */
 public class Game{
-	//the class where the calculations run.
+	/**
+	 * indicates at which stage the game is (organizing period, game or if someone lost
+	 * @author tomer
+	 */
 	public enum Status{
 		flag,org, play, YouWin, OpponentWin, waiting
 	}
 	Status status=Status.flag;
-	private int xMouse, yMouse; //the last mouse position
-	int typeClicked =-1, counter=0; //used in the start, the type the player clicked on and how many tools he put
+	/**
+	 * the last mouse position (x,y coordinates)
+	 */
+	private int xMouse, yMouse; 
+	/**
+	 * the index of the tool the player clicked on
+	 */
+	int typeClicked =-1;
+	/**
+	 *used in the beginning, the type the player clicked on and how many tools he put
+	 */
+	int counter=0;
+	/**
+	 * the place where the last clicked was (left, right or center)
+	 */
 	private Place place;
+	/**
+	 * the main frame and the place where all graphics happen
+	 */
 	private Board board;
-	int opToolFight=-1, MeToolFight=-1;
+	/**
+	 * the indexes of the tool from the opponent from last fight
+	 */
+	int opToolFight=-1;
+	/**
+	 * the indexes of the tool from this player from last fight
+	 */
+	int MeToolFight=-1;
+	/**
+	 * the index of button pressed last time
+	 */
 	private int button;
+	/**
+	 * indicates if the last move was a fight
+	 */
 	private boolean IsFight;
+	/**
+	 * the constructor of the class, initiates the board
+	 * @param b the board (main frame of the game)
+	 */
 	public Game(Board b){
 		board=b;
 	}
+	/**
+	 *the action which runs the game
+	 */
 	private void game(){
-		//the action which runs the game
 		if(status==Status.org) {
-			organize();
+			autoOrganize();
 		}
 		if(status==Status.flag){
 			if(place==Place.main && yMouse<4){
@@ -44,11 +83,13 @@ public class Game{
 		}
 		status=Status.waiting;
 		board.client = new Client(board);
+		System.out.println("client started");
 		board.doSomething=false;
 	}
+	/**
+	 *the part of the game when each player organizes his tools
+	 */
 	private void organize() {
-		//the part of the game when each player organizes his tools
-
 		//checks if there is a tool in the location and erases it
 		if(button==3 && place == Place.main) {
 			int i= HelpFunc.ToolByLoc(xMouse, yMouse, board.me);
@@ -85,6 +126,9 @@ public class Game{
 
 		}
 	}
+	/**
+	 * Runs one turn in the main part of the game
+	 */
 	private void play() {
 		if(board.me.getTools()[0].isDead()) {
 			status=Status.OpponentWin;
@@ -116,13 +160,18 @@ public class Game{
 		int opT=HelpFunc.ToolByLoc(xMouse, yMouse, board.opponent);
 		this.opToolFight=opT;
 		this.MeToolFight=typeClicked;
-		System.out.println(opT+" opt at "+board.opponent.getTools()[opT].getPlace());
+		System.out.println("game play "+opToolFight+" me- "+ MeToolFight);
 		fight(opT,typeClicked);
 		board.repaint();
 		typeClicked=-1;
 		board.client.send("turn");
 
 	}
+	/**
+	 * Gets a point and checks if the tool clicked on can go there
+	 * @param p the point where the click was made
+	 * @return if the tool can go there
+	 */
 	private boolean isValidClick(Point p) {
 		//checks whether the click was valid
 		int x=(int) p.getX();
@@ -155,6 +204,11 @@ public class Game{
 		if(HelpFunc.ToolByLoc(xMouse, yMouse, board.me)!=-1) return false;
 		return true;
 	}
+	/**
+	 * does all the calculations if the player decides to fight
+	 * @param opT the opponent's tool's index in the fight
+	 * @param meT this player's tool's index in the fight
+	 */
 	private void fight(int opT, int meT) {
 		Tool meTool=board.me.getTools()[meT],opTool=board.opponent.getTools()[opT];
 		if(meTool.getType()==opTool.getType()) {
@@ -180,6 +234,13 @@ public class Game{
 			return;
 		}
 	}
+	/**
+	 * gets the click from the board and updates the relevant fields
+	 * @param x the x coordinate of the mouse according to the location
+	 * @param y the y coordinate of the mouse according to the location
+	 * @param place the place where the clicked happened (left, right or center)
+	 * @param button the index of the button clicked
+	 */
 	public void getClick(int x, int y, Place place, int button){
 		xMouse=x;
 		yMouse=y;
@@ -189,6 +250,10 @@ public class Game{
 		board.main.repaint();
 
 	}
+	/**
+	 * analyzes the data from server when sent a single opponent tool
+	 * @param serverString- the data from the server
+	 */
 	public void ToolAnalasys(String serverString) {
 		String[] data= serverString.split("tool");
 		for(int i=0;i<data.length;i++) {
@@ -203,11 +268,16 @@ public class Game{
 				this.opToolFight=type;
 				IsFight=false;
 				board.repaint();
+				System.out.println("game tool analisys "+opToolFight+" me- "+ MeToolFight);
 			}
 			board.opponent.getTools()[type].setLocation(x, 9-y);
 			board.repaint();
 		}
 	}
+	/**
+	 * analyzes the data from server in cases of fight
+	 * @param serverString the data from server
+	 */
 	public void fightAnalasys(String serverString) {
 		//Analyzes the data from server if fight
 		serverString=serverString.substring(5, serverString.length());
@@ -219,21 +289,21 @@ public class Game{
 		//seperates my tool into fields
 		if(!meTool[0].equals("k")) {
 			int x=0, y=0, type=-1;
-			String[] tool= meTool[0].split("##");
-			if(tool.length==4&&tool[0]!=null&&tool[1]!=null&&tool[2]!=null) {
-				x= Integer.parseInt(tool[1]);
-				y= Integer.parseInt(tool[2]);
-				type= Integer.parseInt(tool[3]+"");
+			if(meTool[0]!=null&&meTool[1]!=null&&meTool[2]!=null) {
+				x= Integer.parseInt(meTool[1]);
+				y= Integer.parseInt(meTool[2]);
+				type= Integer.parseInt(meTool[3]+"");
 				this.MeToolFight=type;
 				board.repaint();
 			}
 			if(type!=-1)	board.me.getTools()[type].setLocation(x, y);
 			board.repaint();
-		}		
+		}
 		else {
 			//kills my tool
 			int type=Integer.parseInt(meTool[1]);
 			this.MeToolFight=type;
+			System.out.println(MeToolFight+" me at kills my tool");
 			board.repaint();
 			board.me.getTools()[type].kill();
 		}
@@ -241,13 +311,14 @@ public class Game{
 		String [] opTool=tools[1].split("##");
 		//seperates the opponent tool into fields
 		if(!opTool[0].equals("k")) {
-			ToolAnalasys(tools[1]);
 			IsFight=true;
+			ToolAnalasys(tools[1]);
 		}
 		else {
 			//kills opponent tool
 			int type=Integer.parseInt(opTool[1]);
 			this.opToolFight=type;
+			System.out.println("game opponent tool killed "+opToolFight+" me- "+ MeToolFight);
 			board.opponent.getTools()[type].kill();
 		}
 	}

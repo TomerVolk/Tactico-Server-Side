@@ -1,28 +1,30 @@
 package network;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-
+import java.awt.*;
 import javax.swing.JPanel;
-
 import network.Game.Status;
-
-
-
+/**
+ * the panel where the board is, and where the tools are
+ * @author tomer
+ */
 public class MainPanel extends JPanel{
-	// the panel of the board itself
 	private static final long serialVersionUID = 1L;
+	/**
+	 * the frame of the board
+	 */
 	private Board board;
 
+	/**
+	 * the constructor, initiates the board field and the size and background
+	 * @param b
+	 */
 	public MainPanel(Board b){
 		this.board=b;
 		this.setPreferredSize(new Dimension(b.frame.getWidth()-100, b.frame.getHeight()-50));
 		this.setBackground(new Color(0, 153, 0));
 	}
-
-
+	/**
+	 * the function that draws the panel, including all the tools
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		if(board.game.status==Status.OpponentWin) {
