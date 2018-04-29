@@ -164,8 +164,13 @@ public class Game{
 		fight(opT,typeClicked);
 		board.repaint();
 		typeClicked=-1;
-		board.client.send("turn");
-
+		int p1=HelpFunc.numberAlive(board.me), p2=HelpFunc.numberAlive(board.opponent);
+		if(board.id==0) {
+			board.client.send("turn##"+p1+"##"+p2);
+		}
+		else {
+			board.client.send("turn##"+p2+"##"+p1);
+		}
 	}
 	/**
 	 * Gets a point and checks if the tool clicked on can go there
@@ -215,7 +220,13 @@ public class Game{
 			meTool.kill();
 			opTool.kill();
 			board.client.send("fighttoolk##"+meT+"toolk##"+opT);
-			board.client.send("turn");
+			int p1=HelpFunc.numberAlive(board.me), p2=HelpFunc.numberAlive(board.opponent);
+			if(board.id==0) {
+				board.client.send("turn##"+p1+"##"+p2);
+			}
+			else {
+				board.client.send("turn##"+p2+"##"+p1);
+			}
 			return;
 		}
 		if((meTool.getType()>opTool.getType()&&opTool.getType()!=0)||(meTool.getType()==1&& opTool.getType()==10)||(meTool.getType()==3&&opTool.getType()==0)||opTool.getType()==11) {
@@ -223,14 +234,26 @@ public class Game{
 			board.me.getTools()[meT].setLocation(opTool.getPlace().x, opTool.getPlace().y);
 			opTool.kill();
 			board.client.send("fighttool##"+HelpFunc.turnOneToText(board.me, meT)+"toolk##"+opT);
-			board.client.send("turn");
+			int p1=HelpFunc.numberAlive(board.me), p2=HelpFunc.numberAlive(board.opponent);
+			if(board.id==0) {
+				board.client.send("turn##"+p1+"##"+p2);
+			}
+			else {
+				board.client.send("turn##"+p2+"##"+p1);
+			}
 			return;
 		}
 		if(opTool.getType()>meTool.getType()||(opTool.getType()==0&&meTool.getType()!=3)) {
 			//the opponent won the fight
 			meTool.kill();
 			board.client.send("fighttoolk##"+meT+"tool##"+HelpFunc.turnOneToText(board.opponent, opT));
-			board.client.send("turn");
+			int p1=HelpFunc.numberAlive(board.me), p2=HelpFunc.numberAlive(board.opponent);
+			if(board.id==0) {
+				board.client.send("turn##"+p1+"##"+p2);
+			}
+			else {
+				board.client.send("turn##"+p2+"##"+p1);
+			}
 			return;
 		}
 	}
@@ -296,7 +319,7 @@ public class Game{
 				this.MeToolFight=type;
 				board.repaint();
 			}
-			if(type!=-1)	board.me.getTools()[type].setLocation(x, y);
+			if(type!=-1)	board.me.getTools()[type].setLocation(x,9-y);
 			board.repaint();
 		}
 		else {

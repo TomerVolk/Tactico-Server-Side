@@ -15,7 +15,6 @@ public class Client {
 	 * the field for writing to server 
 	 */
 	BufferedWriter out;
-
 	/**
 	 * the constructor of the Client
 	 * initiate all fields and starts communicating with server 
@@ -27,6 +26,7 @@ public class Client {
 			out=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			NetworkRead readThread=new NetworkRead(socket,board);
 			Thread read=new Thread(readThread);
+			send("computer");
 			read.start();
 		}
 		catch(IOException e){

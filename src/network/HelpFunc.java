@@ -5,6 +5,15 @@ package network;
  * @author tomer
  */
 public class HelpFunc {
+	public static int numberAlive(Player p) {
+		int c=0;
+		for(int i=0;i<40;i++) {
+			if(!p.getTools()[i].isDead()) {
+				c++;
+			}
+		}
+		return c;
+	}
 	/**
 	 * make the Tool array of a player into an array of types 
 	 * @param p the player who's tool need to be turned to array

@@ -70,12 +70,24 @@ class NetworkRead implements Runnable{
 						else
 							if(serverString.startsWith("tool")) {
 								board.game.ToolAnalasys(serverString);
-								board.client.send("turn");
+								int p1=HelpFunc.numberAlive(board.me), p2=HelpFunc.numberAlive(board.opponent);
+								if(id==0) {
+									board.client.send("turn##"+p1+"##"+p2);
+								}
+								else {
+									board.client.send("turn##"+p2+"##"+p1);
+								}
 							}
 							else
 								if(serverString.startsWith("fight")) {
 									board.game.fightAnalasys(serverString);
-									board.client.send("turn");
+									int p1=HelpFunc.numberAlive(board.me), p2=HelpFunc.numberAlive(board.opponent);
+									if(id==0) {
+										board.client.send("turn##"+p1+"##"+p2);
+									}
+									else {
+										board.client.send("turn##"+p2+"##"+p1);
+									}
 								}
 								else
 									if(serverString.startsWith("turn")) {
