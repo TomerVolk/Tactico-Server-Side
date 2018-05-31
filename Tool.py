@@ -1,7 +1,7 @@
 class Tool:
 
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, tool_type):
+        self.tool_type = tool_type
         self.place = (-1, -1)
         self.isDead = True
 
